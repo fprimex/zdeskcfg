@@ -1,0 +1,112 @@
+#!/usr/bin/env python
+
+import zdeskcfg
+
+# Here we annotate the main function arguments. The annotations should match
+# the pattern expected by plac_ini and plac:
+# (help, kind, abbrev, type, choices, metavar)
+
+@zdeskcfg.configure(
+    my_example_var=('example variable showing zdeskcfg usage',
+              'option', 'x', None, None, 'EXAMPLE_VAR')
+    )
+def main(my_example_var='my_example_value'):
+    print "my_example_var", my_example_var
+
+    # Since main is decorated by zdeskcfg.configure, it becomes not only a
+    # function but an object with a getconfig() method that returns the
+    # Zendesk configuration information.
+
+    zdesk_config = main.getconfig()
+
+    # The contents of the config are always the following items:
+    #     zd_email
+    #     zdesk_password
+    #     zdesk_url
+    #     zdesk_token
+
+    for key, val in zdesk_config.iteritems():
+        print key, val
+
+if __name__ == '__main__':
+    # We use the call method of zdeskcfg the way one would if they
+    # were using plac_ini or plac. This does the work of preparing
+    # an argument parser from the annotations, reading the config
+    # file, reading the command line arguments, then actually calling
+    # the main function.
+
+    zdeskcfg.call(main, section='example')
+
+    # Note that the section should correspond to the section being
+    # used by the script, typically. That is, when defined like this:
+    #
+    #     def main(my_example_var='my_example_val')):
+    #
+    # And called like this:
+    #
+    #     zdeskcfg.call(main, section='example')
+    #
+    # my_example_var will be in a section like this:
+    #
+    #     [example]
+    #     my_example_var = zdeskcfg_value
+    #
+    # and will be received by the decorated function as:
+    #
+    #     my_example_var
+    #
+    # and zdesk variables are reported as:
+    #
+    #     zd_email
+    #     zdesk_password
+    #     zdesk_url
+    #     zdesk_token
+
+
+    # When defined like this (note the name is now example_my_example_var):
+    #
+    #     def main(example_my_example_var='my_example_val')):
+    #
+    # And called like this:
+    #
+    #     zdeskcfg.call(main)
+    #
+    # the default section will be None, and so my_example_var will be
+    # parsed as and provided to the main function as:
+    #
+    #     example_my_example_var
+    #
+    # and other variables are still reported as:
+    #
+    #     zd_email
+    #     zdesk_password
+    #     zdesk_url
+    #     zdesk_token
+    #
+    # In this way it is possible to share variables in the config files
+    # between scripts. Beware this can become confusing for end users,
+    # since the name on the command line (example_my_example_var) differs from
+    # the name in the config file (section example, variable my_example_var).
+    #
+    # The main purpose of zdeskcfg is to share the [zdesk] section and
+    # provide one default location for all zdesk related configuration.
+
+    # Finally, you should not call your function like this:
+    #
+    #     zdeskcfg.call(main, section='zdesk')
+    #
+    # because the default section will be zdesk, and so my_example_var will be
+    # parsed as and provided to the main function as:
+    #
+    #     example_my_example_var
+    #
+    # while the other variables are reported as:
+    #
+    #     email
+    #     password
+    #     url
+    #     token
+    #
+    # however this does not match up with what the wrapper looks for,
+    # so their values will be the defaults of None, None, None, and False.
+
