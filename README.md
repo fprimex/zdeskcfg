@@ -13,6 +13,8 @@ under that section, the items:
 * url - Full URL to your Zendesk instance
 * token - Indicate if the password field is an API token
 
+An example file:
+
     # Example ~/.zdeskcfg
     [zdesk]
     email = you@example.com
