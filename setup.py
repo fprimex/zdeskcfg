@@ -6,7 +6,7 @@ should_2to3 = sys.version >= '3'
 setup(name="zdeskcfg",
       version="1.0.0",
       description="Easy configuration of zendesk/zdesk scripts.",
-      long_description="Easy configuration of zendesk/zdesk scripts.",
+      long_description=open('README.txt').read(),
       classifiers=["Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
