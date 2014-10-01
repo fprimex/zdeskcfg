@@ -7,11 +7,24 @@ import zdeskcfg
 # (help, kind, abbrev, type, choices, metavar)
 
 @zdeskcfg.configure(
-    my_example_var=('example variable showing zdeskcfg usage',
-              'option', 'x', None, None, 'EXAMPLE_VAR')
+    ex_var=('example variable showing zdeskcfg usage',
+              'option', 'x', None, None, 'EX')
     )
-def main(my_example_var='my_example_value'):
-    print "my_example_var", my_example_var
+def main(ex_var='ex_val'):
+    """\
+The function docstring is used as help message usage description.
+
+Plac uses the argparse.RawDescriptionHelpFormatter class, which means that
+you have the freedom to format your docstrings however you'd like.
+Unfortunately, this means that it can be a challenge to make both the
+help output and your source look good. See the source for the compromise
+I struck in my own code: triple quote, two backslashes, don't indent the
+text in the source.
+
+You could also make your source look nice, and then use textwrap.dedent
+to (re)assign __doc__ on your function before using zdeskcfg.call.\
+    """
+    print "ex_var", ex_var
 
     # Since main is decorated by zdeskcfg.configure, it becomes not only a
     # function but an object with a getconfig() method that returns the
@@ -40,20 +53,20 @@ if __name__ == '__main__':
     # Note that the section should correspond to the section being
     # used by the script, typically. That is, when defined like this:
     #
-    #     def main(my_example_var='my_example_val')):
+    #     def main(ex_var='ex_val')):
     #
     # And called like this:
     #
     #     zdeskcfg.call(main, section='example')
     #
-    # my_example_var will be in a section like this:
+    # ex_var will be in a section like this:
     #
     #     [example]
-    #     my_example_var = zdeskcfg_value
+    #     ex_var = zdeskcfg_value
     #
     # and will be received by the decorated function as:
     #
-    #     my_example_var
+    #     ex_var
     #
     # and zdesk variables are reported as:
     #
@@ -63,18 +76,18 @@ if __name__ == '__main__':
     #     zdesk_token
 
 
-    # When defined like this (note the name is now example_my_example_var):
+    # When defined like this (note the name is now example_ex_var):
     #
-    #     def main(example_my_example_var='my_example_val')):
+    #     def main(example_ex_var='ex_val')):
     #
     # And called like this:
     #
     #     zdeskcfg.call(main)
     #
-    # the default section will be None, and so my_example_var will be
+    # the default section will be None, and so ex_var will be
     # parsed as and provided to the main function as:
     #
-    #     example_my_example_var
+    #     example_ex_var
     #
     # and other variables are still reported as:
     #
@@ -85,8 +98,8 @@ if __name__ == '__main__':
     #
     # In this way it is possible to share variables in the config files
     # between scripts. Beware this can become confusing for end users,
-    # since the name on the command line (example_my_example_var) differs from
-    # the name in the config file (section example, variable my_example_var).
+    # since the name on the command line (example_ex_var) differs from
+    # the name in the config file (section example, variable ex_var).
     #
     # The main purpose of zdeskcfg is to share the [zdesk] section and
     # provide one default location for all zdesk related configuration.
@@ -95,10 +108,10 @@ if __name__ == '__main__':
     #
     #     zdeskcfg.call(main, section='zdesk')
     #
-    # because the default section will be zdesk, and so my_example_var will be
+    # because the default section will be zdesk, and so ex_var will be
     # parsed as and provided to the main function as:
     #
-    #     example_my_example_var
+    #     example_ex_var
     #
     # while the other variables are reported as:
     #
