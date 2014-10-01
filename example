@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import zdeskcfg
 
 # Here we annotate the main function arguments. The annotations should match
@@ -25,7 +27,7 @@ You could also make your source look nice, and then use textwrap.dedent
 to (re)assign __doc__ on your function before using zdeskcfg.call. Another
 option is to keep your description short, sweet, and single line.\
     """
-    print "ex_var", ex_var
+    print("ex_var", ex_var)
 
     # Since main is decorated by zdeskcfg.configure, it becomes not only a
     # function but an object with a getconfig() method that returns the
@@ -40,7 +42,7 @@ option is to keep your description short, sweet, and single line.\
     #     zdesk_token
 
     for key, val in zdesk_config.iteritems():
-        print key, val
+        print(key, val)
 
 if __name__ == '__main__':
     # We use the call method of zdeskcfg the way one would if they
