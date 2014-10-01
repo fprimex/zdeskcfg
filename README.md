@@ -54,14 +54,14 @@ the following:
 
 Example help output:
 
-    usage: example [-h] [-x EX] [-zdesk-email EMAIL] [-zdesk-password PW]
-                   [-zdesk-url URL] [-zdesk-token]
+    usage: example [-h] [-x EX] [--zdesk-email EMAIL] [--zdesk-password PW]
+                   [--zdesk-url URL] [--zdesk-token]
 
     The function docstring is used as help message usage description.
 
     optional arguments:
-      -h, --help          show this help message and exit
-      -x EX, --ex-var EX  example variable showing zdeskcfg usage
+      -h, --help           show this help message and exit
+      -x EX, --ex-var EX   example variable showing zdeskcfg usage
       --zdesk-email EMAIL  zendesk login email
       --zdesk-password PW  zendesk password or token
       --zdesk-url URL      zendesk instance URL
@@ -91,20 +91,21 @@ Example runs:
     zdesk_token True
 
 
-Under the hood, `zdesk.configure` is a class that works as a decorator. It
-takes annotations in the style of plac as argument, and wraps the decorated
-function (main in this case), which has some operations performed on it. The
-main function is granted a new method (remember Python functions are objects)
-called `getconfig`. The `getconfig` method returns the values of the zdesk
-configuration; either the defaults of `None` and `False`, the values from the
-`~/.zdeskcfg` file in the `[zdesk]` section, or the values given on the command
-line.
+Under the hood `zdesk.configure` is a class that works as a decorator. It takes
+annotations in the style of [plac](https://code.google.com/p/plac/) and
+[plac\_ini](https://github.com/fprimex/plac_ini) as argument, and wraps the
+decorated function (main in this case), which has some operations performed on
+it. The main function is granted a new method (remember Python functions are
+objects) called `getconfig`. The `getconfig` method returns the values of the
+zdesk configuration; either the defaults of `None` and `False`, the values from
+the `~/.zdeskcfg` file in the `[zdesk]` section, or the values given on the
+command line.
 
 See the [example](https://github.com/fprimex/zdeskcfg/blob/master/example)
 script for more detailed comments on the above code.
 
 The result of all of this is that you can share the `[zdesk]` section (and
 other sections) of the `~/.zdeskcfg` between all of your scripts. And, since
-plac and plac\_ini is being used, the scripts get INI parsing, command line
+plac and plac\_ini are being used, the scripts get INI parsing, command line
 parsing, and help generation for essentially free.
 
