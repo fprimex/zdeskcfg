@@ -105,6 +105,7 @@ if __name__ == '__main__':
     # The main purpose of zdeskcfg is to share the [zdesk] section and
     # provide one default location for all zdesk related configuration.
 
+
     # Finally, you should not call your function like this:
     #
     #     zdeskcfg.call(main, section='zdesk')
@@ -123,4 +124,7 @@ if __name__ == '__main__':
     #
     # however this does not match up with what the wrapper looks for,
     # so their values will be the defaults of None, None, None, and False.
+    # You could possibly receive them in named arguments to the function
+    # such as 'email'. Why you'd want to do this I don't know, but I'm not
+    # going to stop you if it might be useful.
 
