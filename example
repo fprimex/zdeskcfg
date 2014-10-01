@@ -22,7 +22,8 @@ I struck in my own code: triple quote, two backslashes, don't indent the
 text in the source.
 
 You could also make your source look nice, and then use textwrap.dedent
-to (re)assign __doc__ on your function before using zdeskcfg.call.\
+to (re)assign __doc__ on your function before using zdeskcfg.call. Another
+option is to keep your description short, sweet, and single line.\
     """
     print "ex_var", ex_var
 
