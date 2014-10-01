@@ -41,8 +41,8 @@ option is to keep your description short, sweet, and single line.\
     #     zdesk_url
     #     zdesk_token
 
-    for key, val in zdesk_config.iteritems():
-        print(key, val)
+    for key in zdesk_config.keys():
+        print(key, zdesk_config[key])
 
 if __name__ == '__main__':
     # We use the call method of zdeskcfg the way one would if they
