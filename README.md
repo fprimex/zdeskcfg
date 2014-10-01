@@ -34,19 +34,62 @@ All that is required is to define a function, decorate it with
 `zdeskcfg.configure`,  and then call it with `zdeskcfg.call`. This looks like
 the following:
 
+    from __future__ import print_function
+
     import zdeskcfg
 
     @zdeskcfg.configure(
-        my_example_var=('example variable showing zdeskcfg usage',
-                  'option', 'x', None, None, 'EXAMPLE_VAR')
+        ex_var=('example variable showing zdeskcfg usage',
+                  'option', 'x', None, None, 'EX')
         )
-    def main(my_example_var='my_example_value'):
-        print "my_example_var {}".format(my_example_var)
-        for key, val in main.getconfig().iteritems():
-            print key, val
+    def main(ex_var='ex_val'):
+        "The function docstring is used as help message usage description."
+        print("ex_var", ex_var)
+        zdesk_config = main.getconfig()
+        for key in zdesk_config.keys():
+            print(key, zdesk_config[key])
 
     if __name__ == '__main__':
         zdeskcfg.call(main, section='example')
+
+Example help output:
+
+    usage: example [-h] [-x EX] [-zdesk-email EMAIL] [-zdesk-password PW]
+                   [-zdesk-url URL] [-zdesk-token]
+
+    The function docstring is used as help message usage description.
+
+    optional arguments:
+      -h, --help          show this help message and exit
+      -x EX, --ex-var EX  example variable showing zdeskcfg usage
+      --zdesk-email EMAIL  zendesk login email
+      --zdesk-password PW  zendesk password or token
+      --zdesk-url URL      zendesk instance URL
+      --zdesk-token        specify if password is a zendesk token
+
+Example runs:
+
+    $./example
+    ex_var ex_val
+    zdesk_email you@example.com
+    zdesk_url https://example.zendesk.com
+    zdesk_password OIJjjlakjdifjoijf766
+    zdesk_token True
+
+    $./example -x EXAMPLE
+    ex_var EXAMPLE
+    zdesk_email you@example.com
+    zdesk_url https://example.zendesk.com
+    zdesk_password OIJjjlakjdifjoijf766
+    zdesk_token True
+
+    $./example -x EXAMPLE --zdesk-url https://examplesandbox.zendesk.com
+    ex_var EXAMPLE
+    zdesk_email you@example.com
+    zdesk_url https://examplesandbox.zendesk.com
+    zdesk_password OIJjjlakjdifjoijf766
+    zdesk_token True
+
 
 Under the hood, `zdesk.configure` is a class that works as a decorator. It
 takes annotations in the style of plac as argument, and wraps the decorated
