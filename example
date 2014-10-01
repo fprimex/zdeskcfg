@@ -33,7 +33,7 @@ to (re)assign __doc__ on your function before using zdeskcfg.call.\
     zdesk_config = main.getconfig()
 
     # The contents of the config are always the following items:
-    #     zd_email
+    #     zdesk_email
     #     zdesk_password
     #     zdesk_url
     #     zdesk_token
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     #
     # and zdesk variables are reported as:
     #
-    #     zd_email
+    #     zdesk_email
     #     zdesk_password
     #     zdesk_url
     #     zdesk_token
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #
     # and other variables are still reported as:
     #
-    #     zd_email
+    #     zdesk_email
     #     zdesk_password
     #     zdesk_url
     #     zdesk_token
