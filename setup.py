@@ -7,7 +7,7 @@ with open("README.txt") as readme_file:
       long_description = readme_file.read()
 
 setup(name="zdeskcfg",
-      version="1.0.2",
+      version="1.0.3",
       description="Easy configuration of zendesk/zdesk scripts.",
       long_description=long_description,
       py_modules=["zdeskcfg"],
