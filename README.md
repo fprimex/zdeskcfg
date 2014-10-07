@@ -99,7 +99,10 @@ it. The main function is granted a new method (remember Python functions are
 objects) called `getconfig`. The `getconfig` method returns the values of the
 zdesk configuration; either the defaults of `None` and `False`, the values from
 the `~/.zdeskcfg` file in the `[zdesk]` section, or the values given on the
-command line.
+command line. `getconfig` can also return the `email`, etc, items under any
+specified section of the ini file. Any missing items will be supplied by the
+`[zdesk]` section or the defaults, and any command line options will still
+override.
 
 See the [example](https://github.com/fprimex/zdeskcfg/blob/master/example)
 script for more detailed comments on the above code.

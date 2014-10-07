@@ -27,12 +27,13 @@ You could also make your source look nice, and then use textwrap.dedent
 to (re)assign __doc__ on your function before using zdeskcfg.call. Another
 option is to keep your description short, sweet, and single line.\
     """
-    print("ex_var", ex_var)
+    print('ex_var', ex_var)
 
     # Since main is decorated by zdeskcfg.configure, it becomes not only a
     # function but an object with a getconfig() method that returns the
     # Zendesk configuration information.
 
+    print('\n[zdesk]')
     zdesk_config = main.getconfig()
 
     # The contents of the config are always the following items:
@@ -40,6 +41,18 @@ option is to keep your description short, sweet, and single line.\
     #     zdesk_password
     #     zdesk_url
     #     zdesk_token
+
+    for key in zdesk_config.keys():
+        print(key, zdesk_config[key])
+
+    # Any section of the ini file can contain email, password, url, and token.
+    # You can use the optional section parameter to getconfig to get these
+    # values. Any missing values will be provided by the zdesk section, and any
+    # values specified on the command line using, e.g., --zdesk-email, etc,
+    # will still take effect.
+
+    print('\n[sandbox]')
+    zdesk_config = main.getconfig(section='sandbox')
 
     for key in zdesk_config.keys():
         print(key, zdesk_config[key])
