@@ -1,3 +1,4 @@
+import sys
 import os
 import inspect
 import plac
@@ -84,7 +85,10 @@ class configure(object):
                 {'signature':signature, 'newsignature':newsignature, 'tgt_func':'tgt_func'}
             )
         evaldict = {'tgt_func' : tgt_func, 'plac' : plac, 'config' : self.__config}
-        exec new_func in evaldict
+        if sys.version >= '3':
+            exec(new_func, evaldict)
+        else:
+            exec new_func in evaldict
         wrapped = evaldict['_wrapper_']
 
         # Update the wrapper with all of the information from the wrapped function
