@@ -6,7 +6,7 @@ import plac_ini
 
 # Define exec_ for python 2 and 3. Taken from six
 if sys.version > '3':
-    exec_ = getattr(moves.builtins, "exec")
+    exec_ = exec
 
 
     def reraise(tp, value, tb=None):
