@@ -110,10 +110,30 @@ class configure(object):
         """
         This method provides a way for decorated functions to get the
         four new configuration parameters *after* it has been called.
+
+        If no section is specified, then the fully resolved zdesk
+        config will be returned. That is defaults, zdesk ini section,
+        command line options.
+
+        If a section is specified, then the same rules apply, but also
+        any missing items are filled in by the zdesk section. So the
+        resolution is defaults, zdesk ini section, specified section,
+        command line options.
         """
         if not section:
             return self.__config.copy()
 
+        cmd_line = {}
+        for k in self.__config:
+            v = self.wrapped.plac_cfg.get(k, 'PLAC__NOT_FOUND')
+            if v != self.__config[k]:
+                # This config item is different when fully resolved
+                # compared to the ini value. It was specified on the
+                # command line.
+                cmd_line[k] = self.__config[k]
+
+        # Get the email, password, url, and token config from the indicated
+        # section, falling back to the zdesk config for convenience
         cfg = {
             "zdesk_email": self.wrapped.plac_cfg.get(section + '_email',
                 self.__config['zdesk_email']),
@@ -124,6 +144,9 @@ class configure(object):
             "zdesk_token": self.wrapped.plac_cfg.get(section + '_token',
                 self.__config['zdesk_token']),
         }
+
+        # The command line trumps all
+        cfg.update(cmd_line)
 
         return cfg
 
