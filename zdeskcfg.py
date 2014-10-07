@@ -29,7 +29,8 @@ class configure(object):
     """
     def __init__(self, **ann):
         self.ann = ann
-        self.config = {}
+        self.wrapped = None
+        self.__config = {}
 
     def __call__(self, tgt_func):
         tgt_argspec = inspect.getargspec(tgt_func)
@@ -82,7 +83,7 @@ class configure(object):
                 '    return %(tgt_func)s(%(signature)s)\n' %
                 {'signature':signature, 'newsignature':newsignature, 'tgt_func':'tgt_func'}
             )
-        evaldict = {'tgt_func' : tgt_func, 'plac' : plac, 'config' : self.config}
+        evaldict = {'tgt_func' : tgt_func, 'plac' : plac, 'config' : self.__config}
         exec new_func in evaldict
         wrapped = evaldict['_wrapper_']
 
@@ -93,19 +94,34 @@ class configure(object):
         wrapped.__module__ = tgt_func.__module__
         wrapped.__dict__ = tgt_func.__dict__
 
-        # Add the complete annotations to the wrapper functoin, and also add the getconfig method
+        # Add the complete annotations to the wrapper function, and also add the getconfig method
         # so that the new arguments can be retrieved inside the wrapped function.
         # This must come after the __dict__ assignment
         wrapped.__annotations__ = self.ann
         wrapped.getconfig = self.getconfig
+        self.wrapped = wrapped
         return wrapped
 
-    def getconfig(self):
+    def getconfig(self, section=None):
         """
         This method provides a way for decorated functions to get the
-        four new configuration parameters.
+        four new configuration parameters *after* it has been called.
         """
-        return self.config
+        if not section:
+            return self.__config.copy()
+
+        cfg = {
+            "zdesk_email": self.wrapped.plac_cfg.get(section + '_email',
+                self.__config['zdesk_email']),
+            "zdesk_password": self.wrapped.plac_cfg.get(section + '_password',
+                self.__config['zdesk_password']),
+            "zdesk_url": self.wrapped.plac_cfg.get(section + '_url',
+                self.__config['zdesk_url']),
+            "zdesk_token": self.wrapped.plac_cfg.get(section + '_token',
+                self.__config['zdesk_token']),
+        }
+
+        return cfg
 
 def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'), section=None):
     plac_ini.call(obj, config=config, default_section=section)
