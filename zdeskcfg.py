@@ -4,6 +4,36 @@ import inspect
 import plac
 import plac_ini
 
+# Define exec_ for python 2 and 3. Taken from six
+if sys.version > '3':
+    exec_ = getattr(moves.builtins, "exec")
+
+
+    def reraise(tp, value, tb=None):
+        if value is None:
+            value = tp()
+        if value.__traceback__ is not tb:
+            raise value.with_traceback(tb)
+        raise value
+
+else:
+    def exec_(_code_, _globs_=None, _locs_=None):
+        """Execute code in a namespace."""
+        if _globs_ is None:
+            frame = sys._getframe(1)
+            _globs_ = frame.f_globals
+            if _locs_ is None:
+                _locs_ = frame.f_locals
+            del frame
+        elif _locs_ is None:
+            _locs_ = _globs_
+        exec("""exec _code_ in _globs_, _locs_""")
+
+
+    exec_("""def reraise(tp, value, tb=None):
+    raise tp, value, tb
+""")
+
 
 # Based on a decorator that modified the call signature for a function
 # http://www.pythoneye.com/184_18642398/
@@ -85,10 +115,7 @@ class configure(object):
                 {'signature':signature, 'newsignature':newsignature, 'tgt_func':'tgt_func'}
             )
         evaldict = {'tgt_func' : tgt_func, 'plac' : plac, 'config' : self.__config}
-        if sys.version >= '3':
-            exec(new_func, evaldict)
-        else:
-            exec new_func in evaldict
+        exec_(new_func, evaldict)
         wrapped = evaldict['_wrapper_']
 
         # Update the wrapper with all of the information from the wrapped function
