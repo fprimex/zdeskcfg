@@ -112,3 +112,22 @@ other sections) of the `~/.zdeskcfg` between all of your scripts. And, since
 plac and plac\_ini are being used, the scripts get INI parsing, command line
 parsing, and help generation for essentially free.
 
+There is also a module-level convenience function, `get_ini_config`, that works
+like the `getconfig` method. You can directly get at the ini file configuration
+without needing to declare and decorate your own function. For example:
+
+    >>> import zdeskcfg
+    >>> zdeskcfg.get_ini_config()
+    >>> zdeskcfg.get_ini_config(section='sandbox')
+
+This is done by just internally decorating an empty placeholder function, then
+using it to retrieve the configuration. This has all of the same behavior as
+`getconfig`, except obviously there are no command line arguments.
+
+The output of `getconfig` and `zdeskcfg.get_ini_config` is made to go directly
+into the zdesk.Zendesk constructor.
+
+    >>> import zdeskcfg
+    >>> from zdesk import Zendesk
+    >>> zd = Zendesk(zdeskcfg.get_ini_config())
+

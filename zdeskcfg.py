@@ -149,3 +149,15 @@ class configure(object):
 def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'), section=None):
     plac_ini.call(obj, config=config, default_section=section)
 
+@configure()
+def __placeholder__(section=None):
+    pass
+
+def get_ini_config(config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'),
+        default_section=None, section=None):
+    """This is a convenience function for getting the zdesk configuration
+    from an ini file without the need to decorate and call your own function.
+    Handy when using zdesk and zdeskcfg from the interactive prompt."""
+    plac_ini.call(__placeholder__, config=config, default_section=default_section)
+    return __placeholder__.getconfig(section)
+
