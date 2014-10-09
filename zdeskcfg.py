@@ -146,8 +146,9 @@ class configure(object):
 
         return cfg
 
-def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'), section=None):
-    plac_ini.call(obj, config=config, default_section=section)
+def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'),
+         section=None, eager=True):
+    return plac_ini.call(obj, config=config, default_section=section, eager=eager)
 
 @configure()
 def __placeholder__(section=None):
