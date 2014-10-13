@@ -129,5 +129,5 @@ into the zdesk.Zendesk constructor.
 
     >>> import zdeskcfg
     >>> from zdesk import Zendesk
-    >>> zd = Zendesk(zdeskcfg.get_ini_config())
+    >>> zd = Zendesk(**zdeskcfg.get_ini_config())
 
