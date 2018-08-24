@@ -67,9 +67,9 @@ class configure(object):
 
         # Add the annotations for the new arguments to the annotations that were passed in
         self.ann.update(dict(
-             zdesk_email=("zendesk login email", "option", None, None, None, "EMAIL"),
-             zdesk_password=("zendesk password or token", "option", None, None, None, "PW"),
-             zdesk_url=("zendesk instance URL", "option", None, None, None, "URL"),
+             zdesk_email=("zendesk login email", "option", None, str, None, "EMAIL"),
+             zdesk_password=("zendesk password or token", "option", None, str, None, "PW"),
+             zdesk_url=("zendesk instance URL", "option", None, str, None, "URL"),
              zdesk_token=("specify if password is a zendesk token", "flag", None, bool),
         ))
 
