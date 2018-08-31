@@ -56,11 +56,11 @@ class configure(object):
                 )[1:-1]
 
         # Defaults for our four new arguments that will go in the wrapper.
-        newdefaults = argspec[3] + (None, None, None, False)
+        newdefaults = argspec[3] + (None, None, None, None, None, False)
         newargspec = argspec[0:3] + (newdefaults,)
 
         # Add the new arguments to the argspec
-        newargspec = (newargspec[0] + ['zdesk_email', 'zdesk_password', 'zdesk_url', 'zdesk_token'],) + newargspec[1:]
+        newargspec = (newargspec[0] + ['zdesk_email', 'zdesk_oauth', 'zdesk_api', 'zdesk_password', 'zdesk_url', 'zdesk_token'],) + newargspec[1:]
 
         # Text version of the arguments with their defaults
         newsignature = inspect.formatargspec(*newargspec)[1:-1]
@@ -68,15 +68,19 @@ class configure(object):
         # Add the annotations for the new arguments to the annotations that were passed in
         self.ann.update(dict(
              zdesk_email=("zendesk login email", "option", None, str, None, "EMAIL"),
+             zdesk_oauth=("zendesk OAuth token", "option", None, str, None, "OAUTH"),
+             zdesk_api=("zendesk API token", "option", None, str, None, "API"),
              zdesk_password=("zendesk password or token", "option", None, str, None, "PW"),
              zdesk_url=("zendesk instance URL", "option", None, str, None, "URL"),
-             zdesk_token=("specify if password is a zendesk token", "flag", None, bool),
+             zdesk_token=("specify if password is a zendesk token (deprecated)", "flag", None, bool),
         ))
 
         # Define and exec the wrapping function that will be returned
         new_func = (
                 'def _wrapper_(%(newsignature)s):\n'
                 '    config["zdesk_email"] = zdesk_email\n'
+                '    config["zdesk_oauth"] = zdesk_oauth\n'
+                '    config["zdesk_api"] = zdesk_api\n'
                 '    config["zdesk_password"] = zdesk_password\n'
                 '    config["zdesk_url"] = zdesk_url\n'
                 '    config["zdesk_token"] = zdesk_token\n'
@@ -133,6 +137,10 @@ class configure(object):
         cfg = {
             "zdesk_email": self.wrapped.plac_cfg.get(section + '_email',
                 self.__config['zdesk_email']),
+            "zdesk_oauth": self.wrapped.plac_cfg.get(section + '_oauth',
+                self.__config['zdesk_oauth']),
+            "zdesk_api": self.wrapped.plac_cfg.get(section + '_api',
+                self.__config['zdesk_api']),
             "zdesk_password": self.wrapped.plac_cfg.get(section + '_password',
                 self.__config['zdesk_password']),
             "zdesk_url": self.wrapped.plac_cfg.get(section + '_url',
