@@ -5,22 +5,37 @@ Python module for easy configuration of zendesk/zdesk scripts.
 ### Configuration file
 
 The default location for the Python Zendesk configuration used by this module
-is `~/.zdeskcfg`. This file can optionally contain the section `zdesk`, and,
-under that section, the items:
+is `~/.zdeskcfg`. This file can contain the section `[zdesk]`, and underneath
+that, the items:
 
-* email - Zendesk email used for logging in
-* password - Zendesk password or API token
-* url - Full URL to your Zendesk instance
-* token - Indicate if the password field is an API token
+* `email` - Email address used for logging in
+* `password` - Zendesk password or API token
+* `oauth` - Zendesk OAuth token
+* `url` - Full URL to your Zendesk instance
+* `token` - Indicate if the password field is an API token
 
 An example file:
 
     # Example ~/.zdeskcfg
-    [zdesk]
+    # Password-based auth, not recommended
+    [acme]
+    url = https://acme.zendesk.com
     email = you@example.com
-    password = 78FLKihfkuh137uijrlkFF88KLIJF
-    url = https://example.zendesk.com
+    password = Z€Nd3$k
+    token = 0
+    
+    # API token-based auth
+    [zdesk]
+    url = https://zdesk.zendesk.com
+    email = you@example.com
+    password = f4Pe8DBBK4K674Au7ffcp1j5t2mG7z4e1wvQE6CZ
     token = 1
+    
+    # OAuth token-based auth
+    # (no need for email, because OAuth contains user auth, too)
+    [support]
+    url = https://support.zendesk.com
+    oauth = 7c6cbb4eac23cd03cf5d9b67ad23993cfb55e2f9049799adac9ada2e69567959
 
 ### Using zdeskcfg
 
