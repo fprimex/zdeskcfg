@@ -14,28 +14,51 @@ that, the items:
 * `url` - Full URL to your Zendesk instance
 * `token` - Indicate if the password field is an API token
 
-An example file:
+Example contents of `~/.zdeskcfg`, separated by method of authentication:
 
-    # Example ~/.zdeskcfg
-    # Password-based auth, not recommended
-    [acme]
-    url = https://acme.zendesk.com
-    email = you@example.com
-    password = Z€Nd3$k
-    token = 0
-    
-    # API token-based auth
-    [zdesk]
-    url = https://zdesk.zendesk.com
-    email = you@example.com
-    password = f4Pe8DBBK4K674Au7ffcp1j5t2mG7z4e1wvQE6CZ
-    token = 1
-    
-    # OAuth token-based auth
-    # (no need for email, because OAuth contains user auth, too)
-    [support]
-    url = https://support.zendesk.com
-    oauth = 7c6cbb4eac23cd03cf5d9b67ad23993cfb55e2f9049799adac9ada2e69567959
+* [Basic Authentication](https://developer.zendesk.com/rest_api/docs/support/introduction#basic-authentication)
+```
+[zdesk]
+url = https://zdesk.zendesk.com
+email = you@example.com
+password = Z€Nd3$k
+token = 0
+```
+
+* [API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token)
+```
+[zdesk]
+url = https://zdesk.zendesk.com
+email = you@example.com
+password = f4Pe8DBBK4K674Au7ffcp1j5t2mG7z4e1wvQE6CZ
+token = 1
+
+# note: the `token` field must be set to `1` for API auth
+```
+
+* [OAuth access token](https://developer.zendesk.com/rest_api/docs/support/introduction#oauth-access-token)
+```
+[zdesk]
+url = https://zdesk.zendesk.com
+oauth = 7c6cbb4eac23cd03cf5d9b67ad23993cfb55e2f9049799adac9ada2e69567959
+
+# note: the `email` field may be omitted because the token also contains user
+# identification
+```
+
+* Add production and sandbox credentials under separate sections, call via the
+name of each `[section]` (e.g. `zdeskcfg.get_config(section='sandbox')`)
+```
+[zdesk]
+url = https://zdesk.zendesk.com
+oauth = d768ab1e418e2f2498e2c862843591972697603efb1cc806d2be62de60e857cd
+
+[sandbox]
+url = https://zdesk1865746743.zendesk.com
+email = you@example.com
+password = QCR6dWzbQ9z85D3kh6GWBHBNe6LbZk4n36eZ5x88
+token = 1
+```
 
 ### Using zdeskcfg
 
