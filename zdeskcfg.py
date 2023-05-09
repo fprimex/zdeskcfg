@@ -40,7 +40,7 @@ class configure(object):
         # calling the tgt_func inside the wrapper. So, the defaults need
         # to be removed.
         signature = inspect.signature(tgt_func)
-        sig = str(signature)[1:-1].split("=")[0]
+        sig = str(signature)[1:-1].split('=')[0]
 
         # Defaults for our four new arguments that will go in the wrapper.
         newdefaults = argspec.defaults + (None, None, None, None, None, False)
@@ -141,11 +141,9 @@ class configure(object):
 
         return cfg
 
-
 def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'),
          section=None, eager=True):
     return plac_ini.call(obj, config=config, default_section=section, eager=eager)
-
 
 def formatconfigargspec(args, varargs=None, varkw=None, defaults=None,
                         kwonlyargs=(), kwonlydefaults={}, annotations={},
@@ -174,7 +172,6 @@ def formatconfigargspec(args, varargs=None, varkw=None, defaults=None,
             spec += formatvalue(defaults[i - firstdefault])
         specs.append(spec)
     return ', '.join(specs)
-
 
 @configure()
 def __placeholder__(section=None):
