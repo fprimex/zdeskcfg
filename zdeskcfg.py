@@ -33,37 +33,24 @@ class configure(object):
         self.__config = {}
 
     def __call__(self, tgt_func):
-        tgt_argspec = inspect.getargspec(tgt_func)
-        need_self = False
-        if tgt_argspec[0][0] == 'self':
-            need_self = True
-
         name = tgt_func.__name__
-        argspec = inspect.getargspec(tgt_func)
-        if argspec[0][0] == 'self':
-            need_self = False
-        if need_self:
-            newargspec = (['self'] + argspec[0],) + argspec[1:]
-        else:
-            newargspec = argspec
+        argspec = inspect.getfullargspec(tgt_func)
 
         # This gets the original function argument names for actually
         # calling the tgt_func inside the wrapper. So, the defaults need
         # to be removed.
-        signature = inspect.formatargspec(
-                formatvalue=lambda val: "",
-                *newargspec
-                )[1:-1]
+        signature = inspect.signature(tgt_func)
+        sig = str(signature)[1:-1].split('=')[0]
 
         # Defaults for our four new arguments that will go in the wrapper.
-        newdefaults = argspec[3] + (None, None, None, None, None, False)
-        newargspec = argspec[0:3] + (newdefaults,)
+        newdefaults = argspec.defaults + (None, None, None, None, None, False)
+        newargspec = (argspec.args, argspec.varargs, argspec.varkw, newdefaults)
 
         # Add the new arguments to the argspec
         newargspec = (newargspec[0] + ['zdesk_email', 'zdesk_oauth', 'zdesk_api', 'zdesk_password', 'zdesk_url', 'zdesk_token'],) + newargspec[1:]
 
         # Text version of the arguments with their defaults
-        newsignature = inspect.formatargspec(*newargspec)[1:-1]
+        newsignature = str(formatconfigargspec(*newargspec))
 
         # Add the annotations for the new arguments to the annotations that were passed in
         self.ann.update(dict(
@@ -84,7 +71,7 @@ class configure(object):
                 '    config["zdesk_password"] = zdesk_password\n'
                 '    config["zdesk_url"] = zdesk_url\n'
                 '    config["zdesk_token"] = zdesk_token\n'
-                '    return %(tgt_func)s(%(signature)s)\n' %
+                '    return %(tgt_func)s%(signature)s\n' %
                 {'signature':signature, 'newsignature':newsignature, 'tgt_func':'tgt_func'}
             )
         evaldict = {'tgt_func' : tgt_func, 'plac' : plac, 'config' : self.__config}
@@ -157,6 +144,34 @@ class configure(object):
 def call(obj, config=os.path.join(os.path.expanduser('~'), '.zdeskcfg'),
          section=None, eager=True):
     return plac_ini.call(obj, config=config, default_section=section, eager=eager)
+
+def formatconfigargspec(args, varargs=None, varkw=None, defaults=None,
+                        kwonlyargs=(), kwonlydefaults={}, annotations={},
+                        formatvalue=lambda value: '=' + repr(value)):
+    """
+    Format an argument spec from the values returned by getconfigargspec.
+    This is a specialized replacement for inspect.formatargspec, which has been
+    deprecated since Python 3.5 and was removed in Python 3.11. It supports
+    valid values for args, defaults and formatvalue; all other parameters are
+    expected to be either empty or None.
+
+    sicherha/powerline@6238d9e8b78f5327f60bd1d2606a37f951a3cd9c
+    """
+    assert varargs is None
+    assert varkw is None
+    assert not kwonlyargs
+    assert not kwonlydefaults
+    assert not annotations
+
+    specs = []
+    if defaults:
+        firstdefault = len(args) - len(defaults)
+    for i, arg in enumerate(args):
+        spec = arg
+        if defaults and i >= firstdefault:
+            spec += formatvalue(defaults[i - firstdefault])
+        specs.append(spec)
+    return ', '.join(specs)
 
 @configure()
 def __placeholder__(section=None):
