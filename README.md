@@ -32,22 +32,22 @@ url = https://zdesk.zendesk.com
 email = you@example.com
 password = f4Pe8DBBK4K674Au7ffcp1j5t2mG7z4e1wvQE6CZ
 token = 1
-
-# note: the `token` field must be set to `1` for API auth
 ```
+
+**Note**: the `token` field must be set to `1` for **API** authentication.
 
 * [OAuth access token](https://developer.zendesk.com/rest_api/docs/support/introduction#oauth-access-token)
 ```
 [zdesk]
 url = https://zdesk.zendesk.com
 oauth = 7c6cbb4eac23cd03cf5d9b67ad23993cfb55e2f9049799adac9ada2e69567959
-
-# note: the `email` field may be omitted because the token also contains user
-# identification
 ```
 
-* Add production and sandbox credentials under separate sections, call via the
-name of each `[section]` (e.g. `zdeskcfg.get_config(section='sandbox')`)
+**Note**: the `email` field may be omitted because the token acts as a
+username & passphrase combination.
+
+Add production and sandbox credentials under separate sections, call via the
+name of each `[section]` (e.g. `zdeskcfg.get_ini_config(section='sandbox')`)
 ```
 [zdesk]
 url = https://zdesk.zendesk.com
