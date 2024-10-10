@@ -4,6 +4,28 @@ import inspect
 import plac
 import plac_ini
 
+from inspect import Signature, Parameter, FullArgSpec
+
+# This code comes from a PR proposed to wrapt (BSD 2-clause).
+# The PR was rejected in favor of a Python 2 compatible implementation.
+# https://github.com/GrahamDumpleton/wrapt/pull/203/files
+def _formatargspec(spec, defaults=True):
+    params = []
+    for arg in spec.args:
+        params.append(Parameter(arg, Parameter.POSITIONAL_OR_KEYWORD))
+    if defaults and spec.defaults:
+        for i, d in enumerate(reversed(spec.defaults)):
+            idx = len(params) - 1 - i
+            params[idx] = params[idx].replace(default=d)
+    if spec.varargs:
+        params.append(Parameter(spec.varargs, Parameter.VAR_POSITIONAL))
+    if hasattr(spec, 'keywords') and spec.keywords:
+        params.append(Parameter(spec.keywords, Parameter.VAR_KEYWORD))
+    if hasattr(spec, 'varkw') and spec.varkw:
+        params.append(Parameter(spec.varkw, Parameter.VAR_KEYWORD))
+
+    return str(Signature(params))
+
 # Based on a decorator that modified the call signature for a function
 # http://www.pythoneye.com/184_18642398/
 # http://stackoverflow.com/questions/18625510/how-can-i-programmatically-change-the-argspec-of-a-function-not-in-a-python-de
@@ -33,13 +55,13 @@ class configure(object):
         self.__config = {}
 
     def __call__(self, tgt_func):
-        tgt_argspec = inspect.getargspec(tgt_func)
+        tgt_argspec = inspect.getfullargspec(tgt_func)
         need_self = False
         if tgt_argspec[0][0] == 'self':
             need_self = True
 
         name = tgt_func.__name__
-        argspec = inspect.getargspec(tgt_func)
+        argspec = inspect.getfullargspec(tgt_func)
         if argspec[0][0] == 'self':
             need_self = False
         if need_self:
@@ -50,20 +72,19 @@ class configure(object):
         # This gets the original function argument names for actually
         # calling the tgt_func inside the wrapper. So, the defaults need
         # to be removed.
-        signature = inspect.formatargspec(
-                formatvalue=lambda val: "",
-                *newargspec
-                )[1:-1]
+        signature = _formatargspec(newargspec, defaults=False)[1:-1]
 
-        # Defaults for our four new arguments that will go in the wrapper.
-        newdefaults = argspec[3] + (None, None, None, None, None, False)
-        newargspec = argspec[0:3] + (newdefaults,)
+        # Defaults for our six new arguments that will go in the wrapper.
+        newdefaults = argspec.defaults + (None, None, None, None, None, False)
+        newargs = newargspec.args + ['zdesk_email', 'zdesk_oauth', 'zdesk_api', 'zdesk_password', 'zdesk_url', 'zdesk_token']
 
-        # Add the new arguments to the argspec
-        newargspec = (newargspec[0] + ['zdesk_email', 'zdesk_oauth', 'zdesk_api', 'zdesk_password', 'zdesk_url', 'zdesk_token'],) + newargspec[1:]
+        # New FullArgSpec named tuple using the new arguments and their new defaults
+        newargspec = FullArgSpec(args=newargs, varargs=None, varkw=None,
+                                 defaults=newdefaults, kwonlyargs=[],
+                                 kwonlydefaults=None, annotations={})
 
         # Text version of the arguments with their defaults
-        newsignature = inspect.formatargspec(*newargspec)[1:-1]
+        newsignature = _formatargspec(newargspec)[1:-1]
 
         # Add the annotations for the new arguments to the annotations that were passed in
         self.ann.update(dict(
