@@ -1,3 +1,12 @@
+# zdeskcfg (and my other Zendesk related projects) Are Now Archived.
+
+I have not worked on this codebase for quite some time, and don't wish to give
+people false hope that I am going to maintain it going forward. I had hoped
+someone in the community might be willing to work with me as a maintainer, but
+that has not happened.
+
+Cheers, it's been fun :)
+
 ## zdeskcfg
 
 Python module for easy configuration of zendesk/zdesk scripts.
